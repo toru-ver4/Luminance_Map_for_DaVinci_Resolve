@@ -2,6 +2,16 @@
 #ifndef COLOR_MAP_DATA_H
 #define COLOR_MAP_DATA_H
 
+// threshold
+__CONSTANT__ float t1 = 1.0;
+__CONSTANT__ float t2 = 2.0;
+__CONSTANT__ float t3 = 4.0;
+__CONSTANT__ float t4 = 6.0;
+__CONSTANT__ float t5 = 10.0;
+__CONSTANT__ float t6 = 20.0;
+__CONSTANT__ float t7 = 40.0;
+__CONSTANT__ float t8 = 101.0;
+
 // palette_0
 __CONSTANT__ float3 p0_0 = { 0.046591, 0.073635, 0.217070 };
 __CONSTANT__ float3 p0_1 = { 0.055910, 0.091194, 0.304694 };
