@@ -44,74 +44,68 @@ float3 apply_sdr_false_color(float y)
     return float3(v, v, v);
 }
 
-// Interpolate between two palette entries
-float3 interp_palette(float3 a, float3 b, float segmentStart, float segmentEnd, float x)
-{
-    return lerp(a, b, (x - segmentStart) / (segmentEnd - segmentStart));
-}
-
 // Palette functions for each band (x in [0,1])
 float3 apply_palette0(float x)
 {
-    if (x <= 0.2)  return lerp(p0_0, p0_1, x / 0.2);
-    if (x <= 0.4)  return lerp(p0_1, p0_2, (x - 0.2) / 0.2);
-    if (x <= 0.6)  return lerp(p0_2, p0_3, (x - 0.4) / 0.2);
-    if (x <= 0.8)  return lerp(p0_3, p0_4, (x - 0.6) / 0.2);
-                   return lerp(p0_4, p0_5, (x - 0.8) / 0.2);
+    if (x <= 0.2)  return lerp_f3(p0_0, p0_1, x / 0.2);
+    if (x <= 0.4)  return lerp_f3(p0_1, p0_2, (x - 0.2) / 0.2);
+    if (x <= 0.6)  return lerp_f3(p0_2, p0_3, (x - 0.4) / 0.2);
+    if (x <= 0.8)  return lerp_f3(p0_3, p0_4, (x - 0.6) / 0.2);
+                   return lerp_f3(p0_4, p0_5, (x - 0.8) / 0.2);
 }
 
 float3 apply_palette1(float x)
 {
-    if (x <= 0.2)  return lerp(p1_0, p1_1, x / 0.2);
-    if (x <= 0.4)  return lerp(p1_1, p1_2, (x - 0.2) / 0.2);
-    if (x <= 0.6)  return lerp(p1_2, p1_3, (x - 0.4) / 0.2);
-    if (x <= 0.8)  return lerp(p1_3, p1_4, (x - 0.6) / 0.2);
-                   return lerp(p1_4, p1_5, (x - 0.8) / 0.2);
+    if (x <= 0.2)  return lerp_f3(p1_0, p1_1, x / 0.2);
+    if (x <= 0.4)  return lerp_f3(p1_1, p1_2, (x - 0.2) / 0.2);
+    if (x <= 0.6)  return lerp_f3(p1_2, p1_3, (x - 0.4) / 0.2);
+    if (x <= 0.8)  return lerp_f3(p1_3, p1_4, (x - 0.6) / 0.2);
+                   return lerp_f3(p1_4, p1_5, (x - 0.8) / 0.2);
 }
 
 float3 apply_palette2(float x)
 {
-    if (x <= 0.2)  return lerp(p2_0, p2_1, x / 0.2);
-    if (x <= 0.4)  return lerp(p2_1, p2_2, (x - 0.2) / 0.2);
-    if (x <= 0.6)  return lerp(p2_2, p2_3, (x - 0.4) / 0.2);
-    if (x <= 0.8)  return lerp(p2_3, p2_4, (x - 0.6) / 0.2);
-                   return lerp(p2_4, p2_5, (x - 0.8) / 0.2);
+    if (x <= 0.2)  return lerp_f3(p2_0, p2_1, x / 0.2);
+    if (x <= 0.4)  return lerp_f3(p2_1, p2_2, (x - 0.2) / 0.2);
+    if (x <= 0.6)  return lerp_f3(p2_2, p2_3, (x - 0.4) / 0.2);
+    if (x <= 0.8)  return lerp_f3(p2_3, p2_4, (x - 0.6) / 0.2);
+                   return lerp_f3(p2_4, p2_5, (x - 0.8) / 0.2);
 }
 
 float3 apply_palette3(float x)
 {
-    if (x <= 0.2)  return lerp(p3_0, p3_1, x / 0.2);
-    if (x <= 0.4)  return lerp(p3_1, p3_2, (x - 0.2) / 0.2);
-    if (x <= 0.6)  return lerp(p3_2, p3_3, (x - 0.4) / 0.2);
-    if (x <= 0.8)  return lerp(p3_3, p3_4, (x - 0.6) / 0.2);
-                   return lerp(p3_4, p3_5, (x - 0.8) / 0.2);
+    if (x <= 0.2)  return lerp_f3(p3_0, p3_1, x / 0.2);
+    if (x <= 0.4)  return lerp_f3(p3_1, p3_2, (x - 0.2) / 0.2);
+    if (x <= 0.6)  return lerp_f3(p3_2, p3_3, (x - 0.4) / 0.2);
+    if (x <= 0.8)  return lerp_f3(p3_3, p3_4, (x - 0.6) / 0.2);
+                   return lerp_f3(p3_4, p3_5, (x - 0.8) / 0.2);
 }
 
 float3 apply_palette4(float x)
 {
-    if (x <= 0.2)  return lerp(p4_0, p4_1, x / 0.2);
-    if (x <= 0.4)  return lerp(p4_1, p4_2, (x - 0.2) / 0.2);
-    if (x <= 0.6)  return lerp(p4_2, p4_3, (x - 0.4) / 0.2);
-    if (x <= 0.8)  return lerp(p4_3, p4_4, (x - 0.6) / 0.2);
-                   return lerp(p4_4, p4_5, (x - 0.8) / 0.2);
+    if (x <= 0.2)  return lerp_f3(p4_0, p4_1, x / 0.2);
+    if (x <= 0.4)  return lerp_f3(p4_1, p4_2, (x - 0.2) / 0.2);
+    if (x <= 0.6)  return lerp_f3(p4_2, p4_3, (x - 0.4) / 0.2);
+    if (x <= 0.8)  return lerp_f3(p4_3, p4_4, (x - 0.6) / 0.2);
+                   return lerp_f3(p4_4, p4_5, (x - 0.8) / 0.2);
 }
 
 float3 apply_palette5(float x)
 {
-    if (x <= 0.2)  return lerp(p5_0, p5_1, x / 0.2);
-    if (x <= 0.4)  return lerp(p5_1, p5_2, (x - 0.2) / 0.2);
-    if (x <= 0.6)  return lerp(p5_2, p5_3, (x - 0.4) / 0.2);
-    if (x <= 0.8)  return lerp(p5_3, p5_4, (x - 0.6) / 0.2);
-                   return lerp(p5_4, p5_5, (x - 0.8) / 0.2);
+    if (x <= 0.2)  return lerp_f3(p5_0, p5_1, x / 0.2);
+    if (x <= 0.4)  return lerp_f3(p5_1, p5_2, (x - 0.2) / 0.2);
+    if (x <= 0.6)  return lerp_f3(p5_2, p5_3, (x - 0.4) / 0.2);
+    if (x <= 0.8)  return lerp_f3(p5_3, p5_4, (x - 0.6) / 0.2);
+                   return lerp_f3(p5_4, p5_5, (x - 0.8) / 0.2);
 }
 
 float3 apply_palette6(float x)
 {
-    if (x <= 0.2)  return lerp(p6_0, p6_1, x / 0.2);
-    if (x <= 0.4)  return lerp(p6_1, p6_2, (x - 0.2) / 0.2);
-    if (x <= 0.6)  return lerp(p6_2, p6_3, (x - 0.4) / 0.2);
-    if (x <= 0.8)  return lerp(p6_3, p6_4, (x - 0.6) / 0.2);
-                   return lerp(p6_4, p6_5, (x - 0.8) / 0.2);
+    if (x <= 0.2)  return lerp_f3(p6_0, p6_1, x / 0.2);
+    if (x <= 0.4)  return lerp_f3(p6_1, p6_2, (x - 0.2) / 0.2);
+    if (x <= 0.6)  return lerp_f3(p6_2, p6_3, (x - 0.4) / 0.2);
+    if (x <= 0.8)  return lerp_f3(p6_3, p6_4, (x - 0.6) / 0.2);
+                   return lerp_f3(p6_4, p6_5, (x - 0.8) / 0.2);
 }
 
 // Main false color function for luminance Y
