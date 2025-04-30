@@ -32,6 +32,128 @@ __CONSTANT__ float font_size_rate = 2;
 __CONSTANT__ float pq_100_cv = 0.508078421517;
 __CONSTANT__ float pq_10000_cv = 1.0;
 
+float3 lerp_f3(float3 a, float3 b, float t)
+{
+    return a + t * (b - a);
+}
+
+// Apply SDR false color (monochrome gamma correction)
+float3 apply_sdr_false_color(float y)
+{
+    float v = pow(y, 1.0 / 1.1);
+    return float3(v, v, v);
+}
+
+// Interpolate between two palette entries
+float3 interp_palette(float3 a, float3 b, float segmentStart, float segmentEnd, float x)
+{
+    return lerp(a, b, (x - segmentStart) / (segmentEnd - segmentStart));
+}
+
+// Palette functions for each band (x in [0,1])
+float3 apply_palette0(float x)
+{
+    if (x <= 0.2)  return lerp(p0_0, p0_1, x / 0.2);
+    if (x <= 0.4)  return lerp(p0_1, p0_2, (x - 0.2) / 0.2);
+    if (x <= 0.6)  return lerp(p0_2, p0_3, (x - 0.4) / 0.2);
+    if (x <= 0.8)  return lerp(p0_3, p0_4, (x - 0.6) / 0.2);
+                   return lerp(p0_4, p0_5, (x - 0.8) / 0.2);
+}
+
+float3 apply_palette1(float x)
+{
+    if (x <= 0.2)  return lerp(p1_0, p1_1, x / 0.2);
+    if (x <= 0.4)  return lerp(p1_1, p1_2, (x - 0.2) / 0.2);
+    if (x <= 0.6)  return lerp(p1_2, p1_3, (x - 0.4) / 0.2);
+    if (x <= 0.8)  return lerp(p1_3, p1_4, (x - 0.6) / 0.2);
+                   return lerp(p1_4, p1_5, (x - 0.8) / 0.2);
+}
+
+float3 apply_palette2(float x)
+{
+    if (x <= 0.2)  return lerp(p2_0, p2_1, x / 0.2);
+    if (x <= 0.4)  return lerp(p2_1, p2_2, (x - 0.2) / 0.2);
+    if (x <= 0.6)  return lerp(p2_2, p2_3, (x - 0.4) / 0.2);
+    if (x <= 0.8)  return lerp(p2_3, p2_4, (x - 0.6) / 0.2);
+                   return lerp(p2_4, p2_5, (x - 0.8) / 0.2);
+}
+
+float3 apply_palette3(float x)
+{
+    if (x <= 0.2)  return lerp(p3_0, p3_1, x / 0.2);
+    if (x <= 0.4)  return lerp(p3_1, p3_2, (x - 0.2) / 0.2);
+    if (x <= 0.6)  return lerp(p3_2, p3_3, (x - 0.4) / 0.2);
+    if (x <= 0.8)  return lerp(p3_3, p3_4, (x - 0.6) / 0.2);
+                   return lerp(p3_4, p3_5, (x - 0.8) / 0.2);
+}
+
+float3 apply_palette4(float x)
+{
+    if (x <= 0.2)  return lerp(p4_0, p4_1, x / 0.2);
+    if (x <= 0.4)  return lerp(p4_1, p4_2, (x - 0.2) / 0.2);
+    if (x <= 0.6)  return lerp(p4_2, p4_3, (x - 0.4) / 0.2);
+    if (x <= 0.8)  return lerp(p4_3, p4_4, (x - 0.6) / 0.2);
+                   return lerp(p4_4, p4_5, (x - 0.8) / 0.2);
+}
+
+float3 apply_palette5(float x)
+{
+    if (x <= 0.2)  return lerp(p5_0, p5_1, x / 0.2);
+    if (x <= 0.4)  return lerp(p5_1, p5_2, (x - 0.2) / 0.2);
+    if (x <= 0.6)  return lerp(p5_2, p5_3, (x - 0.4) / 0.2);
+    if (x <= 0.8)  return lerp(p5_3, p5_4, (x - 0.6) / 0.2);
+                   return lerp(p5_4, p5_5, (x - 0.8) / 0.2);
+}
+
+float3 apply_palette6(float x)
+{
+    if (x <= 0.2)  return lerp(p6_0, p6_1, x / 0.2);
+    if (x <= 0.4)  return lerp(p6_1, p6_2, (x - 0.2) / 0.2);
+    if (x <= 0.6)  return lerp(p6_2, p6_3, (x - 0.4) / 0.2);
+    if (x <= 0.8)  return lerp(p6_3, p6_4, (x - 0.6) / 0.2);
+                   return lerp(p6_4, p6_5, (x - 0.8) / 0.2);
+}
+
+// Main false color function for luminance Y
+float3 apply_false_color(float y)
+{
+    if (y <= t1) {
+        // SDR region: monochrome mapping
+        return apply_sdr_false_color(y);
+    }
+    else if (y <= t2) {
+        float x = (y - t1) / (t2 - t1);
+        return apply_palette0(x);
+    }
+    else if (y <= t3) {
+        float x = (y - t2) / (t3 - t2);
+        return apply_palette1(x);
+    }
+    else if (y <= t4) {
+        float x = (y - t3) / (t4 - t3);
+        return apply_palette2(x);
+    }
+    else if (y <= t5) {
+        float x = (y - t4) / (t5 - t4);
+        return apply_palette3(x);
+    }
+    else if (y <= t6) {
+        float x = (y - t5) / (t6 - t5);
+        return apply_palette4(x);
+    }
+    else if (y <= t7) {
+        float x = (y - t6) / (t7 - t6);
+        return apply_palette5(x);
+    }
+    else if (y <= t8) {
+        float x = (y - t7) / (t8 - t7);
+        return apply_palette6(x);
+    }
+
+    // Above the highest threshold: use final palette color
+    return p6_5;
+}
+
 // main function
 __DEVICE__ float3 transform(int p_Width, int p_Height, int p_X, int p_Y, float p_R, float p_G, float p_B)
 {
@@ -50,8 +172,9 @@ __DEVICE__ float3 transform(int p_Width, int p_Height, int p_X, int p_Y, float p
         y = rgb_2_y(rgb_linear, gamut_idx);
     }
 
-    float3 out_linear = to_float3(y, y, y);
-    float3 out = oetf_st2084_f3(out_linear);
+    float3 false_color_linear = apply_false_color(y);
+
+    float3 out = oetf_st2084_f3(false_color_linear);
 
     return out;
 }
