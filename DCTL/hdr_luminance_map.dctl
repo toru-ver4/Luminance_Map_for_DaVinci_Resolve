@@ -1,4 +1,4 @@
-// #include "ty_color_lib.h"
+#include "ty_color_lib.h"
 // #include "ty_draw_lib.h"
 // #include "color_map_data.h"
 
