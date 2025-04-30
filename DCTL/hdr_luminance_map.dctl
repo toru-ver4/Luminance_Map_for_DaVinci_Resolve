@@ -50,8 +50,8 @@ __DEVICE__ float3 transform(int p_Width, int p_Height, int p_X, int p_Y, float p
         y = rgb_2_y(rgb_linear, gamut_idx);
     }
 
-    float3 out_lienar = to_float3(y, y, y);
-    float3 out = eotf_st2084_f3(out_linear);
+    float3 out_linear = to_float3(y, y, y);
+    float3 out = oetf_st2084_f3(out_linear);
 
     return out;
 }
