@@ -1,4 +1,5 @@
 #include "ty_color_lib.h"
+#include "color_map_data.h"
 // #include "ty_draw_lib.h"
 
 #define JUDGE_METHOD_RGB2Y   (0)
