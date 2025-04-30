@@ -33,20 +33,20 @@ __CONSTANT__ float font_size_rate = 2;
 __CONSTANT__ float pq_100_cv = 0.508078421517;
 __CONSTANT__ float pq_10000_cv = 1.0;
 
-float3 lerp_f3(float3 a, float3 b, float t)
+__DEVICE__ float3 lerp_f3(float3 a, float3 b, float t)
 {
     return a + t * (b - a);
 }
 
 // Apply SDR false color (monochrome gamma correction)
-float3 apply_sdr_false_color(float y)
+__DEVICE__ float3 apply_sdr_false_color(float y)
 {
-    float v = pow(y, 1.0 / 1.1);
-    return float3(v, v, v);
+    float v = _powf(y, 1.0 / 1.1);
+    return to_float3(v, v, v);
 }
 
 // Palette functions for each band (x in [0,1])
-float3 apply_palette0(float x)
+__DEVICE__ float3 apply_palette0(float x)
 {
     if (x <= 0.2)  return lerp_f3(p0_0, p0_1, x / 0.2);
     if (x <= 0.4)  return lerp_f3(p0_1, p0_2, (x - 0.2) / 0.2);
@@ -55,7 +55,7 @@ float3 apply_palette0(float x)
                    return lerp_f3(p0_4, p0_5, (x - 0.8) / 0.2);
 }
 
-float3 apply_palette1(float x)
+__DEVICE__ float3 apply_palette1(float x)
 {
     if (x <= 0.2)  return lerp_f3(p1_0, p1_1, x / 0.2);
     if (x <= 0.4)  return lerp_f3(p1_1, p1_2, (x - 0.2) / 0.2);
@@ -64,7 +64,7 @@ float3 apply_palette1(float x)
                    return lerp_f3(p1_4, p1_5, (x - 0.8) / 0.2);
 }
 
-float3 apply_palette2(float x)
+__DEVICE__ float3 apply_palette2(float x)
 {
     if (x <= 0.2)  return lerp_f3(p2_0, p2_1, x / 0.2);
     if (x <= 0.4)  return lerp_f3(p2_1, p2_2, (x - 0.2) / 0.2);
@@ -73,7 +73,7 @@ float3 apply_palette2(float x)
                    return lerp_f3(p2_4, p2_5, (x - 0.8) / 0.2);
 }
 
-float3 apply_palette3(float x)
+__DEVICE__ float3 apply_palette3(float x)
 {
     if (x <= 0.2)  return lerp_f3(p3_0, p3_1, x / 0.2);
     if (x <= 0.4)  return lerp_f3(p3_1, p3_2, (x - 0.2) / 0.2);
@@ -82,7 +82,7 @@ float3 apply_palette3(float x)
                    return lerp_f3(p3_4, p3_5, (x - 0.8) / 0.2);
 }
 
-float3 apply_palette4(float x)
+__DEVICE__ float3 apply_palette4(float x)
 {
     if (x <= 0.2)  return lerp_f3(p4_0, p4_1, x / 0.2);
     if (x <= 0.4)  return lerp_f3(p4_1, p4_2, (x - 0.2) / 0.2);
@@ -91,7 +91,7 @@ float3 apply_palette4(float x)
                    return lerp_f3(p4_4, p4_5, (x - 0.8) / 0.2);
 }
 
-float3 apply_palette5(float x)
+__DEVICE__ float3 apply_palette5(float x)
 {
     if (x <= 0.2)  return lerp_f3(p5_0, p5_1, x / 0.2);
     if (x <= 0.4)  return lerp_f3(p5_1, p5_2, (x - 0.2) / 0.2);
@@ -100,7 +100,7 @@ float3 apply_palette5(float x)
                    return lerp_f3(p5_4, p5_5, (x - 0.8) / 0.2);
 }
 
-float3 apply_palette6(float x)
+__DEVICE__ float3 apply_palette6(float x)
 {
     if (x <= 0.2)  return lerp_f3(p6_0, p6_1, x / 0.2);
     if (x <= 0.4)  return lerp_f3(p6_1, p6_2, (x - 0.2) / 0.2);
@@ -110,7 +110,7 @@ float3 apply_palette6(float x)
 }
 
 // Main false color function for luminance Y
-float3 apply_false_color(float y)
+__DEVICE__ float3 apply_false_color(float y)
 {
     if (y <= t1) {
         // SDR region: monochrome mapping
