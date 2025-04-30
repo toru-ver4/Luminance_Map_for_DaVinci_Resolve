@@ -1,6 +1,5 @@
 #include "ty_color_lib.h"
 // #include "ty_draw_lib.h"
-// #include "color_map_data.h"
 
 #define JUDGE_METHOD_RGB2Y   (0)
 #define JUDGE_METHOD_MAX_RGB (1)
@@ -37,8 +36,22 @@ __CONSTANT__ float pq_10000_cv = 1.0;
 __DEVICE__ float3 transform(int p_Width, int p_Height, int p_X, int p_Y, float p_R, float p_G, float p_B)
 {
     float3 rgb_in = to_float3(p_R, p_G, p_B);
+    float3 rgb_linear = eotf_st2084_f3(rgb_in);
 
-    float3 out = rgb_in * 2;
+    // convert to Y
+    float y;
+    if(judge_data_idx == JUDGE_METHOD_RGB2Y){
+        y = rgb_2_y(rgb_linear, gamut_idx);
+    }
+    else if(judge_data_idx == JUDGE_METHOD_MAX_RGB){
+        y = _fmaxf(_fmaxf(rgb_linear.x, rgb_linear.y), rgb_linear.z);
+    }
+    else{
+        y = rgb_2_y(rgb_linear, gamut_idx);
+    }
+
+    float3 out_lienar = to_float3(y, y, y);
+    float3 out = eotf_st2084_f3(out_linear);
 
     return out;
 }
