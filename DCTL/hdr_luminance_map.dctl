@@ -52,16 +52,17 @@ __DEVICE__ int2 calc_draw_scale_ed_pos(int p_Width, int p_Height)
     return ed_pos;
 }
 
-__DEVICE__ float3 draw_scale(int p_Width, int p_Height, int p_X, int p_Y, float3 rgb_in, float st_luminance_pq)
+__DEVICE__ float3 draw_scale(int p_Width, int p_Height, int p_X, int p_Y, float3 rgb_in)
 {
     int2 st_pos = calc_draw_scale_st_pos(p_Width, p_Height);
     int2 ed_pos = calc_draw_scale_ed_pos(p_Width, p_Height);
     int2 font_st_pos;
 
     float gray_cv;
+    float line_pq = oetf_st2084(0.99f);  // 99 nits
     float3 out = rgb_in;
 
-    float3 line_color = to_float3(st_luminance_pq*0.999, st_luminance_pq*0.999, st_luminance_pq*0.999);
+    float3 line_color = to_float3(line_pq, line_pq, line_pq);
 
     // draw horizontal line for scale
     int2 scale_st_pos;
@@ -243,12 +244,11 @@ __DEVICE__ float3 apply_false_color(float y)
 __DEVICE__ float3 transform(int p_Width, int p_Height, int p_X, int p_Y, float p_R, float p_G, float p_B)
 {
     float3 rgb_in = to_float3(p_R, p_G, p_B);
-    const float st_luminance_pq = oetf_st2084(1.0f);  // 100 nits
     float3 rgb_with_scale;
 
     // draw scale
     if(show_scale){
-        rgb_with_scale = draw_scale(p_Width, p_Height, p_X, p_Y, rgb_in, st_luminance_pq);
+        rgb_with_scale = draw_scale(p_Width, p_Height, p_X, p_Y, rgb_in);
     }
     else{
         rgb_with_scale = rgb_in;
