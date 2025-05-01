@@ -86,18 +86,6 @@ __DEVICE__ float2 calc_cross_hair_pos(int p_Width, int p_Height, int p_X, int p_
     return pos;
 }
 
-
-__DEVICE__ float3 capture_rgb_value(int p_Width, int p_Height, int p_X, int p_Y, __TEXTURE__ p_TexR, __TEXTURE__ p_TexG, __TEXTURE__ p_TexB, float h_center_pos_rate, float v_center_pos_rate)
-{
-    float3 out;
-    float2 center_pos = calc_cross_hair_pos(p_Width, p_Height, p_X, p_Y, h_center_pos_rate, v_center_pos_rate);
-    out.x = _tex2D(p_TexR, int(center_pos.x), int(center_pos.y));
-    out.y = _tex2D(p_TexG, int(center_pos.x), int(center_pos.y));
-    out.z = _tex2D(p_TexB, int(center_pos.x), int(center_pos.y));
-
-    return out;
-}
-
 __DEVICE__ float3 draw_single_digit(int p_Width, int p_Height, int p_X, int p_Y, float3 rgb_in, float2 g_st_pos, int r_height, int r_width, int d_mask, float3 line_color)
 {
     float3 rgb_out = rgb_in;
