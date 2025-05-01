@@ -76,7 +76,6 @@ __DEVICE__ float3 draw_rectangle(int p_Width, int p_Height, int p_X, int p_Y, fl
     return rgb_out;
 }
 
-
 __DEVICE__ float2 calc_cross_hair_pos(int p_Width, int p_Height, int p_X, int p_Y, float h_center_pos_rate, float v_center_pos_rate)
 {
     float2 pos;
