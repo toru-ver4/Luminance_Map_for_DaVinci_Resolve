@@ -28,7 +28,6 @@ __CONSTANT__ float srgb_to_bt2020_mtx[3][3] = {
     { 0.016391, 0.088013, 0.8955953 },
 };
 
-
 // Apply 3x3 matrix
 __DEVICE__ float3 apply_matrix(float3 in, float mtx[3][3])
 {
@@ -40,7 +39,6 @@ __DEVICE__ float3 apply_matrix(float3 in, float mtx[3][3])
 
     return out;
 }
-
 
 // Converts RGB to Y.
 __DEVICE__ float rgb_2_y(float3 in, int gamut_idx)

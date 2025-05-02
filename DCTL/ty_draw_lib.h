@@ -8,14 +8,6 @@
 #define FONT_COLOR_IDX_MAGENTA (4)
 #define FONT_COLOR_IDX_YELLOW (5)
 
-#define CROSS_HAIR_COLOR_IDX_RED (0)
-#define CROSS_HAIR_COLOR_IDX_GREEN (1)
-#define CROSS_HAIR_COLOR_IDX_BLUE (2)
-#define CROSS_HAIR_COLOR_IDX_CYAN (3)
-#define CROSS_HAIR_COLOR_IDX_MAGENTA (4)
-#define CROSS_HAIR_COLOR_IDX_YELLOW (5)
-
-
 typedef struct{
     int x;
     int y;
@@ -30,10 +22,6 @@ __CONSTANT__ float3 rgbmyc_color[] = {
     {0.5, 0.5, 0.0},
 };
 
-__CONSTANT__ float3 cross_hair_color = {0.5, 0.0, 0.5};
-__CONSTANT__ float3 seven_seg_color = {0.5, 0.5, 0.5};
-__CONSTANT__ float3 cross_hair_edge_color = {0.0, 0.0, 0.0};
-__CONSTANT__ float3 black_color = {0.0, 0.0, 0.0};
 __CONSTANT__ float3 grey_color = {0.6, 0.6, 0.6};
 __CONSTANT__ int digit_to_mask[] = {0x3F, 0x06, 0x5B, 0x4F, 0x66, 0x6D, 0x7D, 0x07, 0x7F, 0x6F};
 #define TEXT_PERIOD_MASK (0x80)
@@ -68,15 +56,6 @@ __DEVICE__ float3 draw_rectangle(int p_Width, int p_Height, int p_X, int p_Y, fl
     }
 
     return rgb_out;
-}
-
-__DEVICE__ float2 calc_cross_hair_pos(int p_Width, int p_Height, int p_X, int p_Y, float h_center_pos_rate, float v_center_pos_rate)
-{
-    float2 pos;
-    pos.x = h_center_pos_rate * p_Width + 0.5;
-    pos.y = v_center_pos_rate * p_Height + 0.5;
-
-    return pos;
 }
 
 __DEVICE__ float3 draw_single_digit(int p_Width, int p_Height, int p_X, int p_Y, float3 rgb_in, float2 g_st_pos, int r_height, int r_width, int d_mask, float3 line_color)
@@ -176,7 +155,6 @@ __DEVICE__ float3 draw_digits_int(int p_Width, int p_Height, int p_X, int p_Y, f
     float3 rgb_out = rgb_in;
     float2 text_width_float = calc_text_width(r_width, r_height);
     int text_width = int(text_width_float.x);
-    int text_width_period = int(text_width_float.y);
     float magnitude_value;
     int digit;
     int integer_digits = calc_integer_digits(drawing_value);
