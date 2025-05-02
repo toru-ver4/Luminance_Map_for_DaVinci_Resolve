@@ -19,7 +19,7 @@ __CONSTANT__ int scale_cv_list_size = 9;
 
 DEFINE_UI_PARAMS(gamut_idx, Timeline Color Gamut, DCTLUI_COMBO_BOX, 2, { GAMUT_IDX_BT709, GAMUT_IDX_P3D65, GAMUT_IDX_BT2020 }, { Rec.709, P3-D65, Rec.2020 })
 DEFINE_UI_PARAMS(judge_data_idx, Judgment Data Type, DCTLUI_COMBO_BOX, 0, { JUDGE_METHOD_RGB2Y, JUDGE_METHOD_MAX_RGB }, { Luminance_RGB2Y, Max_Value_Among_RGB })
-DEFINE_UI_PARAMS(show_scale, Show scale, DCTLUI_CHECK_BOX, 1)
+DEFINE_UI_PARAMS(show_scale, Show Scale, DCTLUI_CHECK_BOX, 1)
 
 __CONSTANT__ float st_pos_h_rate = 0.01;
 __CONSTANT__ float st_pos_v_rate = 0.05;
