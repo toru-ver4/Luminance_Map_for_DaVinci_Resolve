@@ -103,10 +103,9 @@ __DEVICE__ float3 draw_scale_text(int p_Width, int p_Height, int p_X, int p_Y, f
     int scale_edge_len = int(_round(float(ed_pos.x - st_pos.x) * scale_h_rate));
     scale_st_pos.x = st_pos.x - scale_edge_len;
     scale_ed_pos.x = ed_pos.x + scale_edge_len;
-    DigitResult digits_result;
+    float3 rgb_out = rgb_in;
 
     float gray_cv;
-    digits_result.rgb = rgb_in;
 
     // draw text
     int r_height = int(_round(float(p_Height) / 1080.0 * font_size_rate));
@@ -118,10 +117,10 @@ __DEVICE__ float3 draw_scale_text(int p_Width, int p_Height, int p_X, int p_Y, f
         scale_st_pos.y = int(_round(float(ed_pos.y) - float(ed_pos.y - st_pos.y) * (cv - pq_st_cv) / (pq_10000_cv - pq_st_cv)));
         font_st_pos.y = scale_st_pos.y + 1 - half_text_height;
         float drawing_value = scale_y_list[ii];
-        digits_result = draw_digits_int(p_Width, p_Height, p_X, p_Y, digits_result.rgb, drawing_value, font_st_pos, r_height, r_width, grey_color);
+        rgb_out = draw_digits_int(p_Width, p_Height, p_X, p_Y, rgb_out, drawing_value, font_st_pos, r_height, r_width, grey_color);
     }
 
-    return digits_result.rgb;
+    return rgb_out;
 }
 
 __DEVICE__ float3 lerp_f3(float3 a, float3 b, float t)

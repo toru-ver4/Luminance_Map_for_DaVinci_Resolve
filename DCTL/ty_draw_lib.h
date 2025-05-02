@@ -21,12 +21,6 @@ typedef struct{
     int y;
 } int2;
 
-
-typedef struct {
-    float2 st_pos;
-    float3 rgb;
-} DigitResult;
-
 __CONSTANT__ float3 rgbmyc_color[] = {
     {0.5, 0.0, 0.0},
     {0.0, 0.5, 0.0},
@@ -176,7 +170,7 @@ __DEVICE__ float2 calc_text_width(int r_width, int r_height)
     return out;
 }
 
-__DEVICE__ DigitResult draw_digits_int(int p_Width, int p_Height, int p_X, int p_Y, float3 rgb_in, float drawing_value, int2 g_st_pos, int r_height, int r_width, float3 font_color)
+__DEVICE__ float3 draw_digits_int(int p_Width, int p_Height, int p_X, int p_Y, float3 rgb_in, float drawing_value, int2 g_st_pos, int r_height, int r_width, float3 font_color)
 {
     int ii;
     float3 rgb_out = rgb_in;
@@ -234,10 +228,7 @@ __DEVICE__ DigitResult draw_digits_int(int p_Width, int p_Height, int p_X, int p
         rgb_out = draw_single_digit(p_Width, p_Height, p_X, p_Y, rgb_out, st_pos, r_height, r_width, digit_to_mask[digit], font_color);
     }
 
-    DigitResult result;
-    result.st_pos = st_pos;
-    result.rgb = rgb_out;
-    return result;
+    return rgb_out;
 }
 
 #endif
