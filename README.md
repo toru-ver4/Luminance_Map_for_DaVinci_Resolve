@@ -1,57 +1,58 @@
-# Luminance Map
+# Luminance Map (7JzCzhz False Color)
 
-Luminance Map is a simple effect for DaVinci Resolve, written in DaVinci Color Transform Language (DCTL).
+Luminance Map (7JzCzhz False Color) is a simple effect for DaVinci Resolve, implemented using DaVinci Color Transform Language (DCTL).
+
+It allows you to create false color effects based on the luminance of HDR10 content.
 
 ## Description
 
-This effect applies a color map to the HDR signal based on the luminance level, as shown in the figure below.
+This effect applies a false color display to an HDR signal based on its luminance level, as illustrated in the figure below.
 
-I created this effect as part of my study of DCTL.
+I developed this effect as part of my exploration into DCTL.
 
-| Original image | ![hoge](https://user-images.githubusercontent.com/3609012/238657074-b99148ee-b12e-483c-81fd-19bbc2f33a6e.png) |
-|:----:|:----:|
-| Image after applying effect | ![fuga](https://user-images.githubusercontent.com/3609012/238657123-8384a524-74f2-4b8b-8ba1-9ca45ee864e9.png) |
+| Original Image | ![Original Image](https://private-user-images.githubusercontent.com/3609012/440108336-9d91ebae-03f8-4821-98ff-cbbc1fdd33e2.png?jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJnaXRodWIuY29tIiwiYXVkIjoicmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbSIsImtleSI6ImtleTUiLCJleHAiOjE3NDYyNjMwNjAsIm5iZiI6MTc0NjI2Mjc2MCwicGF0aCI6Ii8zNjA5MDEyLzQ0MDEwODMzNi05ZDkxZWJhZS0wM2Y4LTQ4MjEtOThmZi1jYmJjMWZkZDMzZTIucG5nP1gtQW16LUFsZ29yaXRobT1BV1M0LUhNQUMtU0hBMjU2JlgtQW16LUNyZWRlbnRpYWw9QUtJQVZDT0RZTFNBNTNQUUs0WkElMkYyMDI1MDUwMyUyRnVzLWVhc3QtMSUyRnMzJTJGYXdzNF9yZXF1ZXN0JlgtQW16LURhdGU9MjAyNTA1MDNUMDg1OTIwWiZYLUFtei1FeHBpcmVzPTMwMCZYLUFtei1TaWduYXR1cmU9YjQzOTVkZWUzYjc2Y2RlNjdjNWYwZWQ5YzcxMmYyNWYyOGY4NTkzNzQ4ODM2YWE1NTUyZmZhY2MwYWI0ZDVhOSZYLUFtei1TaWduZWRIZWFkZXJzPWhvc3QifQ.jvEB5fLbGb2Onn8LIXOVs_S-hmMxOyB2xv-O51hc3tE) |
+|:--------------:|:-------------------------------------------------------------------------------------------------:|
+| Effect Applied | ![Effect Applied](https://private-user-images.githubusercontent.com/3609012/440108332-bcfd1654-1814-44f9-a06f-e360e9b44135.png?jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJnaXRodWIuY29tIiwiYXVkIjoicmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbSIsImtleSI6ImtleTUiLCJleHAiOjE3NDYyNjMwNjAsIm5iZiI6MTc0NjI2Mjc2MCwicGF0aCI6Ii8zNjA5MDEyLzQ0MDEwODMzMi1iY2ZkMTY1NC0xODE0LTQ0ZjktYTA2Zi1lMzYwZTliNDQxMzUucG5nP1gtQW16LUFsZ29yaXRobT1BV1M0LUhNQUMtU0hBMjU2JlgtQW16LUNyZWRlbnRpYWw9QUtJQVZDT0RZTFNBNTNQUUs0WkElMkYyMDI1MDUwMyUyRnVzLWVhc3QtMSUyRnMzJTJGYXdzNF9yZXF1ZXN0JlgtQW16LURhdGU9MjAyNTA1MDNUMDg1OTIwWiZYLUFtei1FeHBpcmVzPTMwMCZYLUFtei1TaWduYXR1cmU9YzJmYzllZDg4NTVjNzY5MzJjZDBiMDZmYjRhY2VkOTNlYmU0MDhjMjYzNzRmYjBkMjg3OGI0YTQwYThiODE3OSZYLUFtei1TaWduZWRIZWFkZXJzPWhvc3QifQ.KfnbCPfLyKT9VkoBnUmD7b14P5v8F0k_BDUKGFPr640) |
 
 ## Demo
 
-[YouTube](https://youtu.be/VU0b3E_Ye_8)
+Watch the demo on [YouTube](https://youtu.be/CVPQD-OdkGU).
+
+[![Watch the demo](https://img.youtube.com/vi/CVPQD-OdkGU/0.jpg)](https://youtu.be/CVPQD-OdkGU)
 
 ## Getting started
 
 ### Requrements
 
-DaVinci Resolve 18.1 or later.
+- DaVinci Resolve 19.1 or later.
 
-### Install
+### Installation
 
-Copy the `DCTL` directory the DaVinci Resolve's LUT directory.
+Copy the `DCTL` directory into DaVinci Resolve's LUT directory.
 
-### Settings for DaVinci Resolve
+* Windows: `C:\ProgramData\Blackmagic Design\DaVinci Resolve\Support\LUT`
+* macOS: `/Library/Application Support/Blackmagic Design/DaVinci Resolve/LUT`
 
-You should apply these settings unless there are specific reasons not to.
+### DaVinci Resolve Settings
 
-1. Set the gamma of the "Timeline color space" to "ST2084" or "Rec.2100 ST2084."
+Unless you have a specific reason not to, apply the following settings:
+
+1. Set the gamma for the "Timeline Color Space" to either "ST2084" or "Rec.2100 ST2084."
 2. Set both "Input DRT" and "Output DRT" to "None."
 
-| ![fig3](https://user-images.githubusercontent.com/3609012/238667479-a43b7109-b5cf-4fc8-986e-c515ec2b77b8.png) |
-|:--------:|
-| Fig 3. Suggested configurations for "Color Management"|
+| ![Recommended Settings](https://user-images.githubusercontent.com/3609012/238667479-a43b7109-b5cf-4fc8-986e-c515ec2b77b8.png) |
+|:---------------------------------------------------------------------------------------------------------------------:|
+| *Recommended configuration for "Color Management"* |
 
-This effect functions correctly only with the ST2084 gamma curve.
-Moreover, it is strongly recommended to disable DRT,
-as the purpose of this effect is to analyze the HDR signal
-that has already done color grading.
+**Note:** This effect works correctly only with the ST2084 gamma curve. It is also strongly recommended to disable DRT, as the purpose of this effect is to analyze an HDR signal that has already been color graded.
 
 ### Applying the effect
 
-1. Apply the DCTL effect to the HDR video on the timeline.
-2. Choose "hdr_luminance_map" from the DCTL List within Effects settings.
-3. Set the parameters listed below.
+1. Apply the DCTL effect to your HDR video on the timeline.
+2. Select "hdr_luminance_map" from the DCTL list in the Effects settings.
+3. Configure the following parameters:
 
-| Parameter name | Description |
-|:-----------:|:---------:|
-| Start \[cd/m2\] | Specify the luminance range for color map application |
-| End \[cd/m2\] | Specify the luminance range for color map application |
-| Timeline Color Gamut | Set the same value as "Timeline color space"|
-| Judgment Data Type | Choose either "Luminance_RGB2Y" or "Max_Value_Among_RGB" |
-| Over Range Color | Choose "Magenta", "Yellow", or "Cyan" |
+| Parameter Name        | Description                                                                     |
+|-----------------------|---------------------------------------------------------------------------------|
+| Timeline Color Gamut  | Set this value to match your "Timeline Color Space."                            |
+| Judgment Data Type    | Choose between "Luminance_RGB2Y" and "Max_Value_Among_RGB."                     |
