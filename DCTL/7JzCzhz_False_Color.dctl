@@ -1,0 +1,281 @@
+#include "ty_color_lib.h"
+#include "color_map_data.h"
+#include "ty_draw_lib.h"
+
+#define JUDGE_METHOD_RGB2Y   (0)
+#define JUDGE_METHOD_MAX_RGB (1)
+
+#define OVER_RANGE_COLOR_M   (0)
+#define OVER_RANGE_COLOR_Y   (1)
+#define OVER_RANGE_COLOR_C   (2)
+
+__CONSTANT__ float3 over_range_color_m_3f = {1.0f, 0.3f, 1.0f};
+__CONSTANT__ float3 over_range_color_y_3f = {1.0f, 1.0f, 0.4f};
+__CONSTANT__ float3 over_range_color_c_3f = {0.7f, 1.0f, 1.0f};
+
+__CONSTANT__ float scale_cv_list[] = {0.35701241, 0.50807842, 0.57913325, 0.6525786, 0.69629409, 0.7518271, 0.82742464, 0.90257239, 1.0};
+__CONSTANT__ int scale_y_list[] = {20, 100, 200, 400, 600, 1000, 2000, 4000, 10000};
+__CONSTANT__ int scale_cv_list_size = 9;
+
+DEFINE_UI_PARAMS(gamut_idx, Timeline Color Gamut, DCTLUI_COMBO_BOX, 2, { GAMUT_IDX_BT709, GAMUT_IDX_P3D65, GAMUT_IDX_BT2020 }, { Rec.709, P3-D65, Rec.2020 })
+DEFINE_UI_PARAMS(judge_data_idx, Judgment Data Type, DCTLUI_COMBO_BOX, 0, { JUDGE_METHOD_RGB2Y, JUDGE_METHOD_MAX_RGB }, { Luminance_RGB2Y, Max_Value_Among_RGB })
+DEFINE_UI_PARAMS(show_scale, Show Scale, DCTLUI_CHECK_BOX, 1)
+
+__CONSTANT__ float st_pos_h_rate = 0.01;
+__CONSTANT__ float st_pos_v_rate = 0.05;
+__CONSTANT__ float ed_pos_h_rate = 0.03;
+__CONSTANT__ float ed_pos_v_rate = 0.95;
+__CONSTANT__ float scale_h_rate = 0.2;
+__CONSTANT__ float font_size_rate = 2;
+__CONSTANT__ float pq_st_cv = 0.357012408444; // 20 nits
+__CONSTANT__ float pq_10000_cv = 1.0;
+
+__DEVICE__ int2 calc_draw_scale_st_pos(int p_Width, int p_Height)
+{
+    int2 st_pos;
+    st_pos.x = int(_round(st_pos_h_rate * p_Width));
+    st_pos.y = int(_round(st_pos_v_rate * p_Height));
+
+    return st_pos;
+}
+
+
+__DEVICE__ int2 calc_draw_scale_ed_pos(int p_Width, int p_Height)
+{
+    int2 ed_pos;
+    ed_pos.x = int(_round(ed_pos_h_rate * p_Width));
+    ed_pos.y = int(_round(ed_pos_v_rate * p_Height));
+
+    return ed_pos;
+}
+
+__DEVICE__ float3 draw_scale(int p_Width, int p_Height, int p_X, int p_Y, float3 rgb_in)
+{
+    int2 st_pos = calc_draw_scale_st_pos(p_Width, p_Height);
+    int2 ed_pos = calc_draw_scale_ed_pos(p_Width, p_Height);
+    int2 font_st_pos;
+
+    float gray_cv;
+    float line_pq = oetf_st2084(0.99f);  // 99 nits
+    float3 out = rgb_in;
+
+    float3 line_color = to_float3(line_pq, line_pq, line_pq);
+
+    // draw horizontal line for scale
+    int2 scale_st_pos;
+    int2 scale_ed_pos;
+    int scale_edge_len = int(_round(float(ed_pos.x - st_pos.x) * scale_h_rate));
+    scale_st_pos.x = st_pos.x - scale_edge_len;
+    scale_ed_pos.x = ed_pos.x + scale_edge_len;
+    for(int ii=0; ii<scale_cv_list_size; ii++){
+        float cv = scale_cv_list[ii];
+        scale_st_pos.y = int(_round(float(ed_pos.y) - float(ed_pos.y - st_pos.y) * (cv - pq_st_cv) / (pq_10000_cv - pq_st_cv)));
+        scale_st_pos.y = scale_st_pos.y - 1;  // To make the line thicker
+        scale_ed_pos.y = scale_st_pos.y + 1;
+        scale_ed_pos.y = scale_ed_pos.y + 1;  // To make the line thicker
+        out = draw_rectangle_int(p_Width, p_Height, p_X, p_Y, out, scale_st_pos, scale_ed_pos, line_color);
+    }
+
+    // draw lamp pattern
+    if((st_pos.x <= p_X) && (p_X < ed_pos.x)){
+        if((st_pos.y <= p_Y) && (p_Y < ed_pos.y)){
+            gray_cv = (float(p_Height - p_Y) - st_pos.y) / (ed_pos.y - st_pos.y);
+            gray_cv = (pq_10000_cv - pq_st_cv) * gray_cv + pq_st_cv;
+            out.x = gray_cv;
+            out.y = gray_cv;
+            out.z = gray_cv;
+        }
+    }
+
+    return out;
+}
+
+__DEVICE__ float3 draw_scale_text(int p_Width, int p_Height, int p_X, int p_Y, float3 rgb_in)
+{
+    int2 st_pos = calc_draw_scale_st_pos(p_Width, p_Height);
+    int2 ed_pos = calc_draw_scale_ed_pos(p_Width, p_Height);
+    int2 font_st_pos;
+    int2 scale_st_pos;
+    int2 scale_ed_pos;
+    int scale_edge_len = int(_round(float(ed_pos.x - st_pos.x) * scale_h_rate));
+    scale_st_pos.x = st_pos.x - scale_edge_len;
+    scale_ed_pos.x = ed_pos.x + scale_edge_len;
+    float3 rgb_out = rgb_in;
+
+    float gray_cv;
+
+    // draw text
+    int r_height = int(_round(float(p_Height) / 1080.0 * font_size_rate));
+    int r_width = r_height * 4;
+    int half_text_height = (r_height * 13) / 2;
+    font_st_pos.x = scale_ed_pos.x;
+    for(int ii=0; ii<scale_cv_list_size; ii++){
+        float cv = scale_cv_list[ii];
+        scale_st_pos.y = int(_round(float(ed_pos.y) - float(ed_pos.y - st_pos.y) * (cv - pq_st_cv) / (pq_10000_cv - pq_st_cv)));
+        font_st_pos.y = scale_st_pos.y + 1 - half_text_height;
+        float drawing_value = scale_y_list[ii];
+        rgb_out = draw_digits_int(p_Width, p_Height, p_X, p_Y, rgb_out, drawing_value, font_st_pos, r_height, r_width, grey_color);
+    }
+
+    return rgb_out;
+}
+
+__DEVICE__ float3 lerp_f3(float3 a, float3 b, float t)
+{
+    return a + t * (b - a);
+}
+
+// Apply SDR false color (monochrome gamma correction)
+__DEVICE__ float3 apply_sdr_false_color(float y)
+{
+    float v = _powf(y, 1.0 / 1.1);
+    return to_float3(v, v, v);
+}
+
+// Palette functions for each band (x in [0,1])
+__DEVICE__ float3 apply_palette0(float x)
+{
+    if (x <= 0.2)  return lerp_f3(p0_0, p0_1, x / 0.2);
+    if (x <= 0.4)  return lerp_f3(p0_1, p0_2, (x - 0.2) / 0.2);
+    if (x <= 0.6)  return lerp_f3(p0_2, p0_3, (x - 0.4) / 0.2);
+    if (x <= 0.8)  return lerp_f3(p0_3, p0_4, (x - 0.6) / 0.2);
+                   return lerp_f3(p0_4, p0_5, (x - 0.8) / 0.2);
+}
+
+__DEVICE__ float3 apply_palette1(float x)
+{
+    if (x <= 0.2)  return lerp_f3(p1_0, p1_1, x / 0.2);
+    if (x <= 0.4)  return lerp_f3(p1_1, p1_2, (x - 0.2) / 0.2);
+    if (x <= 0.6)  return lerp_f3(p1_2, p1_3, (x - 0.4) / 0.2);
+    if (x <= 0.8)  return lerp_f3(p1_3, p1_4, (x - 0.6) / 0.2);
+                   return lerp_f3(p1_4, p1_5, (x - 0.8) / 0.2);
+}
+
+__DEVICE__ float3 apply_palette2(float x)
+{
+    if (x <= 0.2)  return lerp_f3(p2_0, p2_1, x / 0.2);
+    if (x <= 0.4)  return lerp_f3(p2_1, p2_2, (x - 0.2) / 0.2);
+    if (x <= 0.6)  return lerp_f3(p2_2, p2_3, (x - 0.4) / 0.2);
+    if (x <= 0.8)  return lerp_f3(p2_3, p2_4, (x - 0.6) / 0.2);
+                   return lerp_f3(p2_4, p2_5, (x - 0.8) / 0.2);
+}
+
+__DEVICE__ float3 apply_palette3(float x)
+{
+    if (x <= 0.2)  return lerp_f3(p3_0, p3_1, x / 0.2);
+    if (x <= 0.4)  return lerp_f3(p3_1, p3_2, (x - 0.2) / 0.2);
+    if (x <= 0.6)  return lerp_f3(p3_2, p3_3, (x - 0.4) / 0.2);
+    if (x <= 0.8)  return lerp_f3(p3_3, p3_4, (x - 0.6) / 0.2);
+                   return lerp_f3(p3_4, p3_5, (x - 0.8) / 0.2);
+}
+
+__DEVICE__ float3 apply_palette4(float x)
+{
+    if (x <= 0.2)  return lerp_f3(p4_0, p4_1, x / 0.2);
+    if (x <= 0.4)  return lerp_f3(p4_1, p4_2, (x - 0.2) / 0.2);
+    if (x <= 0.6)  return lerp_f3(p4_2, p4_3, (x - 0.4) / 0.2);
+    if (x <= 0.8)  return lerp_f3(p4_3, p4_4, (x - 0.6) / 0.2);
+                   return lerp_f3(p4_4, p4_5, (x - 0.8) / 0.2);
+}
+
+__DEVICE__ float3 apply_palette5(float x)
+{
+    if (x <= 0.2)  return lerp_f3(p5_0, p5_1, x / 0.2);
+    if (x <= 0.4)  return lerp_f3(p5_1, p5_2, (x - 0.2) / 0.2);
+    if (x <= 0.6)  return lerp_f3(p5_2, p5_3, (x - 0.4) / 0.2);
+    if (x <= 0.8)  return lerp_f3(p5_3, p5_4, (x - 0.6) / 0.2);
+                   return lerp_f3(p5_4, p5_5, (x - 0.8) / 0.2);
+}
+
+__DEVICE__ float3 apply_palette6(float x)
+{
+    if (x <= 0.2)  return lerp_f3(p6_0, p6_1, x / 0.2);
+    if (x <= 0.4)  return lerp_f3(p6_1, p6_2, (x - 0.2) / 0.2);
+    if (x <= 0.6)  return lerp_f3(p6_2, p6_3, (x - 0.4) / 0.2);
+    if (x <= 0.8)  return lerp_f3(p6_3, p6_4, (x - 0.6) / 0.2);
+                   return lerp_f3(p6_4, p6_5, (x - 0.8) / 0.2);
+}
+
+// Main false color function for luminance Y
+__DEVICE__ float3 apply_false_color(float y, float mono)
+{
+    if (y <= t1) {
+        // SDR region: monochrome mapping
+        return apply_sdr_false_color(mono);
+    }
+    else if (y <= t2) {
+        float x = (y - t1) / (t2 - t1);
+        return apply_palette0(x);
+    }
+    else if (y <= t3) {
+        float x = (y - t2) / (t3 - t2);
+        return apply_palette1(x);
+    }
+    else if (y <= t4) {
+        float x = (y - t3) / (t4 - t3);
+        return apply_palette2(x);
+    }
+    else if (y <= t5) {
+        float x = (y - t4) / (t5 - t4);
+        return apply_palette3(x);
+    }
+    else if (y <= t6) {
+        float x = (y - t5) / (t6 - t5);
+        return apply_palette4(x);
+    }
+    else if (y <= t7) {
+        float x = (y - t6) / (t7 - t6);
+        return apply_palette5(x);
+    }
+    else if (y <= t8) {
+        float x = (y - t7) / (t8 - t7);
+        return apply_palette6(x);
+    }
+
+    // Above the highest threshold: use final palette color
+    return p6_5;
+}
+
+// main function
+__DEVICE__ float3 transform(int p_Width, int p_Height, int p_X, int p_Y, float p_R, float p_G, float p_B)
+{
+    float3 rgb_in = to_float3(p_R, p_G, p_B);
+    float3 rgb_with_scale;
+
+    // draw scale
+    if(show_scale){
+        rgb_with_scale = draw_scale(p_Width, p_Height, p_X, p_Y, rgb_in);
+    }
+    else{
+        rgb_with_scale = rgb_in;
+    }
+
+    float3 rgb_linear = eotf_st2084_f3(rgb_with_scale);
+
+    // convert to Y
+    float y;
+    float mono = rgb_2_y(rgb_linear, gamut_idx);
+    if(judge_data_idx == JUDGE_METHOD_RGB2Y){
+        y = mono;
+    }
+    else if(judge_data_idx == JUDGE_METHOD_MAX_RGB){
+        y = _fmaxf(_fmaxf(rgb_linear.x, rgb_linear.y), rgb_linear.z);
+    }
+    else{
+        y = mono;
+    }
+
+    float3 false_color_linear = apply_false_color(y, mono);
+
+    float3 out = oetf_st2084_f3(false_color_linear);
+
+    // add scale text
+    if(show_scale){
+        out = draw_scale_text(p_Width, p_Height, p_X, p_Y, out);
+    }
+    else{
+        out = out;
+    }
+
+    return out;
+}

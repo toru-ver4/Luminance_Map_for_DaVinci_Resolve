@@ -28,7 +28,6 @@ __CONSTANT__ float srgb_to_bt2020_mtx[3][3] = {
     { 0.016391, 0.088013, 0.8955953 },
 };
 
-
 // Apply 3x3 matrix
 __DEVICE__ float3 apply_matrix(float3 in, float mtx[3][3])
 {
@@ -41,26 +40,30 @@ __DEVICE__ float3 apply_matrix(float3 in, float mtx[3][3])
     return out;
 }
 
-
 // Converts RGB to Y.
 __DEVICE__ float rgb_2_y(float3 in, int gamut_idx)
 {
     float y;
-    float *coef;
     if(gamut_idx == GAMUT_IDX_BT709){
-        coef = rgb2y_coef_bt709;
+        y = rgb2y_coef_bt709[0] * in.x +
+            rgb2y_coef_bt709[1] * in.y +
+            rgb2y_coef_bt709[2] * in.z;
     }
     else if(gamut_idx == GAMUT_IDX_P3D65){
-        coef = rgb2y_coef_p3d65;
+        y = rgb2y_coef_p3d65[0] * in.x +
+            rgb2y_coef_p3d65[1] * in.y +
+            rgb2y_coef_p3d65[2] * in.z;
     }
     else if(gamut_idx == GAMUT_IDX_BT2020){
-        coef = rgb2y_coef_bt2020;
+        y = rgb2y_coef_bt2020[0] * in.x +
+            rgb2y_coef_bt2020[1] * in.y +
+            rgb2y_coef_bt2020[2] * in.z;
     }
     else{
-        coef = rgb2y_coef_bt709;
+        y = rgb2y_coef_bt709[0] * in.x +
+            rgb2y_coef_bt709[1] * in.y +
+            rgb2y_coef_bt709[2] * in.z;
     }
-    y = coef[0] * in.x + coef[1] * in.y + coef[2] * in.z;
-
     return y;
 }
 
