@@ -24,7 +24,7 @@ DEFINE_UI_PARAMS(conv_to_sRGB, Convert to sRGB, DCTLUI_CHECK_BOX, 0)
 
 __CONSTANT__ float st_pos_h_rate = 0.01;
 __CONSTANT__ float st_pos_v_rate = 0.05;
-__CONSTANT__ float ed_pos_h_rate = 0.03;
+__CONSTANT__ float ed_pos_h_rate = 0.025;
 __CONSTANT__ float ed_pos_v_rate = 0.95;
 __CONSTANT__ float scale_h_rate = 0.2;
 __CONSTANT__ float font_size_rate = 2;
@@ -100,7 +100,7 @@ __DEVICE__ float3 draw_scale_text(int p_Width, int p_Height, int p_X, int p_Y, f
     int2 scale_ed_pos;
     int scale_edge_len = int(_round(float(ed_pos.x - st_pos.x) * scale_h_rate));
     scale_st_pos.x = st_pos.x - scale_edge_len;
-    scale_ed_pos.x = ed_pos.x + scale_edge_len;
+    scale_ed_pos.x = ed_pos.x + scale_edge_len * 2;
     float3 rgb_out = rgb_in;
 
     float gray_cv;
