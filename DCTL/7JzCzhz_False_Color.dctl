@@ -258,10 +258,10 @@ __DEVICE__ float3 transform(int p_Width, int p_Height, int p_X, int p_Y, float p
     // conv to bt.2020
     // =====================
     float3 rgb_linear_2020;
-    if(gamut_idx == 1){
+    if(gamut_idx == GAMUT_IDX_BT2020){
         rgb_linear_2020 = rgb_linear;
     }
-    else if(gamut_idx == 0){
+    else if(gamut_idx == GAMUT_IDX_P3D65){
         rgb_linear_2020 = apply_matrix(rgb_linear, p3d65_to_bt2020_mtx);
     }
     else{
@@ -284,10 +284,10 @@ __DEVICE__ float3 transform(int p_Width, int p_Height, int p_X, int p_Y, float p
     float3 false_color_linear = apply_false_color(y, mono);
 
     if(conv_to_sRGB == 0){
-        if(gamut_idx == 1){
+        if(gamut_idx == GAMUT_IDX_BT2020){
             out = oetf_st2084_f3(false_color_linear);
         }
-        else if(gamut_idx == 0){
+        else if(gamut_idx == GAMUT_IDX_P3D65){
             float3 false_color_linear_p3d65 = apply_matrix(false_color_linear, bt2020_to_p3d65_mtx);
             out = oetf_st2084_f3(false_color_linear_p3d65);
         }

@@ -4,9 +4,8 @@
 
 #include "ampas_color_lib.h"
 
-#define GAMUT_IDX_BT709  (0)
-#define GAMUT_IDX_P3D65  (1)
-#define GAMUT_IDX_BT2020 (2)
+#define GAMUT_IDX_P3D65  (0)
+#define GAMUT_IDX_BT2020 (1)
 
 typedef struct {
     float3 row0;
@@ -16,13 +15,13 @@ typedef struct {
 
 __CONSTANT__ float rgb2y_coef_bt2020[] = {0.26270021f, 0.67799807f, 0.05930171f};
 
-__CONSTANT__ Matrix3x3 bt2020_to_p3d65_mtx = {
+__CONSTANT__ Matrix3x3 p3d65_to_bt2020_mtx = {
     { 0.75383303, 0.19859737, 0.0475696 },
     { 0.04574385, 0.94177722, 0.01247893 },
     { -0.00121034, 0.01760172, 0.98360862 }
 };
 
-__CONSTANT__ Matrix3x3 p3d65_to_bt2020_mtx = {
+__CONSTANT__ Matrix3x3 bt2020_to_p3d65_mtx = {
     { 1.34357825, -0.28217967, -0.06139858 },
     { -0.06529745, 1.07578792, -0.01049046 },
     { 0.00282179, -0.01959849, 1.01677671 }
