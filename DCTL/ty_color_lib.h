@@ -8,62 +8,49 @@
 #define GAMUT_IDX_P3D65  (1)
 #define GAMUT_IDX_BT2020 (2)
 
-__CONSTANT__ float rgb2y_coef_bt709[] = {0.21263901f, 0.71516868f, 0.07219232f};
-__CONSTANT__ float rgb2y_coef_p3d65[] = {0.22897456f, 0.69173852f, 0.07928691f};
+typedef struct {
+    float3 row0;
+    float3 row1;
+    float3 row2;
+} Matrix3x3;
+
 __CONSTANT__ float rgb2y_coef_bt2020[] = {0.26270021f, 0.67799807f, 0.05930171f};
 
-__CONSTANT__ float srgb_to_bt709_mtx[3][3] = {
-    { 1.000000, 0.000000, 0.0000000 },
-    { 0.000000, 1.000000, 0.0000000 },
-    { -0.000000, -0.000000, 1.0000000 },
+__CONSTANT__ Matrix3x3 bt2020_to_p3d65_mtx = {
+    { 0.75383303, 0.19859737, 0.0475696 },
+    { 0.04574385, 0.94177722, 0.01247893 },
+    { -0.00121034, 0.01760172, 0.98360862 }
 };
-__CONSTANT__ float srgb_to_p3d65_mtx[3][3] = {
-    { 0.822462, 0.177538, -0.0000000 },
-    { 0.033194, 0.966806, -0.0000000 },
-    { 0.017083, 0.072397, 0.9105199 },
+
+__CONSTANT__ Matrix3x3 p3d65_to_bt2020_mtx = {
+    { 1.34357825, -0.28217967, -0.06139858 },
+    { -0.06529745, 1.07578792, -0.01049046 },
+    { 0.00282179, -0.01959849, 1.01677671 }
 };
-__CONSTANT__ float srgb_to_bt2020_mtx[3][3] = {
-    { 0.627404, 0.329283, 0.0433131 },
-    { 0.069097, 0.919540, 0.0113623 },
-    { 0.016391, 0.088013, 0.8955953 },
+
+__CONSTANT__ Matrix3x3 bt2020_to_rec709_mtx = {
+    { 1.660491, -0.58764114, -0.07284986 },
+    { -0.12455047, 1.1328999, -0.00834942 },
+    { -0.01815076, -0.1005789, 1.11872966 }
 };
 
 // Apply 3x3 matrix
-__DEVICE__ float3 apply_matrix(float3 in, float mtx[3][3])
+__DEVICE__ float3 apply_matrix(float3 in, Matrix3x3 mtx)
 {
     float3 out;
-
-    out.x = in.x * mtx[0][0] + in.y * mtx[0][1] + in.z * mtx[0][2];
-    out.y = in.x * mtx[1][0] + in.y * mtx[1][1] + in.z * mtx[1][2];
-    out.z = in.x * mtx[2][0] + in.y * mtx[2][1] + in.z * mtx[2][2];
-
+    out.x = in.x * mtx.row0.x + in.y * mtx.row0.y + in.z * mtx.row0.z;
+    out.y = in.x * mtx.row1.x + in.y * mtx.row1.y + in.z * mtx.row1.z;
+    out.z = in.x * mtx.row2.x + in.y * mtx.row2.y + in.z * mtx.row2.z;
     return out;
 }
 
 // Converts RGB to Y.
-__DEVICE__ float rgb_2_y(float3 in, int gamut_idx)
+__DEVICE__ float rgb_2_y(float3 in)
 {
     float y;
-    if(gamut_idx == GAMUT_IDX_BT709){
-        y = rgb2y_coef_bt709[0] * in.x +
-            rgb2y_coef_bt709[1] * in.y +
-            rgb2y_coef_bt709[2] * in.z;
-    }
-    else if(gamut_idx == GAMUT_IDX_P3D65){
-        y = rgb2y_coef_p3d65[0] * in.x +
-            rgb2y_coef_p3d65[1] * in.y +
-            rgb2y_coef_p3d65[2] * in.z;
-    }
-    else if(gamut_idx == GAMUT_IDX_BT2020){
-        y = rgb2y_coef_bt2020[0] * in.x +
-            rgb2y_coef_bt2020[1] * in.y +
-            rgb2y_coef_bt2020[2] * in.z;
-    }
-    else{
-        y = rgb2y_coef_bt709[0] * in.x +
-            rgb2y_coef_bt709[1] * in.y +
-            rgb2y_coef_bt709[2] * in.z;
-    }
+    y = rgb2y_coef_bt2020[0] * in.x +
+        rgb2y_coef_bt2020[1] * in.y +
+        rgb2y_coef_bt2020[2] * in.z;
     return y;
 }
 
