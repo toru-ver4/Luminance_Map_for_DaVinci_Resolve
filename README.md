@@ -10,9 +10,9 @@ This effect applies a false color display to an HDR signal based on its luminanc
 
 I developed this effect as part of my exploration into DCTL.
 
-| Original Image | ![Original Image](https://private-user-images.githubusercontent.com/3609012/440108336-9d91ebae-03f8-4821-98ff-cbbc1fdd33e2.png?jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJnaXRodWIuY29tIiwiYXVkIjoicmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbSIsImtleSI6ImtleTUiLCJleHAiOjE3NDYyNjMwNjAsIm5iZiI6MTc0NjI2Mjc2MCwicGF0aCI6Ii8zNjA5MDEyLzQ0MDEwODMzNi05ZDkxZWJhZS0wM2Y4LTQ4MjEtOThmZi1jYmJjMWZkZDMzZTIucG5nP1gtQW16LUFsZ29yaXRobT1BV1M0LUhNQUMtU0hBMjU2JlgtQW16LUNyZWRlbnRpYWw9QUtJQVZDT0RZTFNBNTNQUUs0WkElMkYyMDI1MDUwMyUyRnVzLWVhc3QtMSUyRnMzJTJGYXdzNF9yZXF1ZXN0JlgtQW16LURhdGU9MjAyNTA1MDNUMDg1OTIwWiZYLUFtei1FeHBpcmVzPTMwMCZYLUFtei1TaWduYXR1cmU9YjQzOTVkZWUzYjc2Y2RlNjdjNWYwZWQ5YzcxMmYyNWYyOGY4NTkzNzQ4ODM2YWE1NTUyZmZhY2MwYWI0ZDVhOSZYLUFtei1TaWduZWRIZWFkZXJzPWhvc3QifQ.jvEB5fLbGb2Onn8LIXOVs_S-hmMxOyB2xv-O51hc3tE) |
+| Original Image | ![Original Image](./img/Before_false_color.png) |
 |:--------------:|:-------------------------------------------------------------------------------------------------:|
-| Effect Applied | ![Effect Applied](https://private-user-images.githubusercontent.com/3609012/440108332-bcfd1654-1814-44f9-a06f-e360e9b44135.png?jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJnaXRodWIuY29tIiwiYXVkIjoicmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbSIsImtleSI6ImtleTUiLCJleHAiOjE3NDYyNjMwNjAsIm5iZiI6MTc0NjI2Mjc2MCwicGF0aCI6Ii8zNjA5MDEyLzQ0MDEwODMzMi1iY2ZkMTY1NC0xODE0LTQ0ZjktYTA2Zi1lMzYwZTliNDQxMzUucG5nP1gtQW16LUFsZ29yaXRobT1BV1M0LUhNQUMtU0hBMjU2JlgtQW16LUNyZWRlbnRpYWw9QUtJQVZDT0RZTFNBNTNQUUs0WkElMkYyMDI1MDUwMyUyRnVzLWVhc3QtMSUyRnMzJTJGYXdzNF9yZXF1ZXN0JlgtQW16LURhdGU9MjAyNTA1MDNUMDg1OTIwWiZYLUFtei1FeHBpcmVzPTMwMCZYLUFtei1TaWduYXR1cmU9YzJmYzllZDg4NTVjNzY5MzJjZDBiMDZmYjRhY2VkOTNlYmU0MDhjMjYzNzRmYjBkMjg3OGI0YTQwYThiODE3OSZYLUFtei1TaWduZWRIZWFkZXJzPWhvc3QifQ.KfnbCPfLyKT9VkoBnUmD7b14P5v8F0k_BDUKGFPr640) |
+| Effect Applied | ![Effect Applied](./img/After_false_color.png) |
 
 ## Demo
 
